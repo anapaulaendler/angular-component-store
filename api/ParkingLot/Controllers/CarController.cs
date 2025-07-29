@@ -31,13 +31,21 @@ public class CarsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Car>> GetCar(Guid id)
     {
-        var Car = await _context.Cars.FindAsync(id);
-        if (Car is null) return NotFound();
+        var car = await _context.Cars.FindAsync(id);
+        if (car is null) return NotFound();
 
-        return Car;
+        return car;
+    }
+
+    [HttpGet("plate/{plate}")]
+    public async Task<ActionResult<Car>> GetCarByPlate(string plate)
+    {
+        var car = await _context.Cars.FirstOrDefaultAsync(x => x.Plate == plate);
+        if (car is null) return NotFound();
+
+        return car;
     }
         
-
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateCar(Guid id, Car car)
     {
