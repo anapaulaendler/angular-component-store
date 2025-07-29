@@ -1,20 +1,13 @@
 import { Injectable } from '@angular/core';
 import { CallState, ParkingState } from './models/parking-state';
-import { LoadingState } from './models/loading-state.enum';
-import { ErrorState } from './models/error-state';
+import { CallStatus } from './models/loading-state.enum';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { ParkingLotService } from '../services/parking-lot.service';
 import { catchError, concatMap, EMPTY, Observable } from 'rxjs';
 import { Car } from '../models/car';
 
-// TODO: revisar e adaptar de acordo com a tipagem nativa do ts
-// Utility function to extract the error from the state
-function getError(callState: CallState): LoadingState | string | null {
-  if ((callState as ErrorState).errorMsg !== undefined) {
-    return (callState as ErrorState).errorMsg;
-  }
-
-  return null;
+function getError(callState: CallState): string | null {
+  return callState.status === CallStatus.ERROR ? callState.errorMsg : null;
 }
 
 @Injectable({
@@ -25,7 +18,7 @@ export class StoreService extends ComponentStore<ParkingState> {
   constructor(private parkingLotService: ParkingLotService) { 
     super({
       cars: [],
-      callState: LoadingState.INIT
+      callState: { status: CallStatus.INIT }
     });
   }
 
@@ -37,7 +30,7 @@ export class StoreService extends ComponentStore<ParkingState> {
    * - error$: to get the error message
   */
   private readonly cars$: Observable<Car[]> = this.select(state => state.cars);
-  private readonly loading$: Observable<boolean> = this.select(state => state.callState === LoadingState.LOADING);
+  private readonly loading$: Observable<boolean> = this.select(state => state.callState.status === CallStatus.LOADING);
   private readonly error$: Observable<string | null> = this.select(state => getError(state.callState)); // TODO: ? rever esse 'Observable<string | null>'
 
   /**
@@ -63,36 +56,29 @@ export class StoreService extends ComponentStore<ParkingState> {
    * - To update the loading
    * - To add cars to the parking lot
    */
-  readonly updateError = this.updater((state: ParkingState, error: string) => {
-    return {
-      ...state,
-      callState: {
-        errorMsg: error
-      }
-    };
-  });
+  readonly updateError = this.updater((state: ParkingState, error: string) => ({
+    ...state,
+    callState: {
+      status: CallStatus.ERROR,
+      errorMsg: error
+    }
+  }));
 
-  readonly setLoading = this.updater((state: ParkingState) => {
-    return {
-      ...state,
-      callState: LoadingState.LOADING
-    };
-  });
+  readonly setLoading = this.updater((state: ParkingState) => ({
+    ...state,
+    callState: { status: CallStatus.LOADING }
+  }));
 
-  readonly setLoaded = this.updater((state: ParkingState) => {
-    return {
-      ...state,
-      callState: LoadingState.LOADED
-    };
-  });
+  readonly setLoaded = this.updater((state: ParkingState) => ({
+    ...state,
+    callState: { status: CallStatus.LOADED }
+  }));
 
-  readonly updateCars = this.updater((state: ParkingState, car: Car) => {
-    return {
-      ...state,
-      error: "",
-      cars: [...state.cars, car]
-    };
-  });
+  readonly updateCars = this.updater((state: ParkingState, car: Car) => ({
+    ...state,
+    error: "",
+    cars: [...state.cars, car]
+  }));
 
   /**
    * EFFECTS: It is also to update the state but do some other necessary task beforehand. 
