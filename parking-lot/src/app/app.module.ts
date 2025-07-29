@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CarListComponent } from './components/car-list/car-list.component';
+import { FormsModule } from '@angular/forms'
 
 @NgModule({
   declarations: [
@@ -12,7 +13,8 @@ import { CarListComponent } from './components/car-list/car-list.component';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
