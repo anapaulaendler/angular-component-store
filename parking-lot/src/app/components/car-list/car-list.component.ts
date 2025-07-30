@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Car } from 'src/app/models/car';
 
 @Component({
@@ -7,7 +7,9 @@ import { Car } from 'src/app/models/car';
   styleUrls: ['./car-list.component.scss']
 })
 export class CarListComponent implements OnInit {
-  @Input() cars: Car[] = []
+  @Input() cars: Car[] = [];
+  @Output() delete = new EventEmitter<string>();
+  @Output() select = new EventEmitter<Car>();
   
   constructor() { }
 

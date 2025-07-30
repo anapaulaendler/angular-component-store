@@ -1,22 +1,8 @@
-<table *ngIf="cars.length; else noCars">
-  <thead>
-    <tr>
-      <th>Plate</th>
-      <th>Brand</th>
-      <th>Model</th>
-      <th>Color</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let car of cars">
-      <td>{{ car.plate }}</td>
-      <td>{{ car.brand }}</td>
-      <td>{{ car.model }}</td>
-      <td>{{ car.color }}</td>
-    </tr>
-  </tbody>
-</table>
-
-<ng-template #noCars>
-  <p>No cars in the parking lot.</p>
-</ng-template>
+<ul>
+  <li *ngFor="let car of cars">
+    <span (click)="select.emit(car)" style="cursor: pointer">
+      {{ car.plate }} – {{ car.brand }}
+    </span>
+    <button (click)="delete.emit(car.id)">Delete</button>
+  </li>
+</ul>
