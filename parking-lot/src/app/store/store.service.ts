@@ -3,7 +3,7 @@ import { CallState, ParkingState } from './models/parking-state';
 import { CallStatus } from './models/loading-state.enum';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { ParkingLotService } from '../services/parking-lot.service';
-import { catchError, concatMap, EMPTY, Observable } from 'rxjs';
+import { catchError, concatMap, EMPTY, Observable, of } from 'rxjs';
 import { Car } from '../models/car';
 
 function getError(callState: CallState): string | null {
@@ -79,6 +79,21 @@ export class StoreService extends ComponentStore<ParkingState> {
     cars: [...state.cars, car]
   }));
 
+  readonly setCars = this.updater((state: ParkingState, cars: Car[]) => ({
+    ...state,
+    cars: [...cars]
+  }));
+
+  readonly replaceCar = this.updater((state, updatedCar: Car) => ({
+    ...state,
+    cars: state.cars.map(car => car.id === updatedCar.id ? updatedCar : car)
+  }));
+
+  readonly removeCar = this.updater((state, id: string) => ({
+    ...state,
+    cars: state.cars.filter(car => car.id !== id)
+  }));
+
   /**
    * EFFECTS: It is also to update the state but do some other necessary task beforehand. 
    * For example, an HTTP request to an API.
@@ -106,10 +121,95 @@ export class StoreService extends ComponentStore<ParkingState> {
               this.setLoaded();
               this.updateCars(car);
             },
-            (e: string) => this.updateError(e)
+            (error) => this.updateError(String(error))
           ),
 
           catchError(() => EMPTY)
+        );
+      })
+    );
+  });
+
+  readonly addCarViaApi = this.effect((plate$: Observable<string>) => {
+    return plate$.pipe(
+      concatMap((plate) => {
+        this.setLoading();
+        return this.parkingLotService.add(plate).pipe(
+          tapResponse(
+            (car) => {
+              this.setLoaded();
+              this.updateCars(car);
+            },
+            (error) => this.updateError(String(error))
+          )
+        );
+      })
+    );
+  });
+
+  readonly loadAllCars = this.effect((trigger$: Observable<void>) => {
+    return trigger$.pipe(
+      concatMap(() => {
+        this.setLoading();
+        return this.parkingLotService.getAll().pipe(
+          tapResponse(
+            (cars) => {
+              this.setLoaded();
+              this.setCars(cars);
+            },
+            (error) => this.updateError(String(error))
+          )
+        );
+      })
+    );
+  });
+
+  readonly loadCarById = this.effect((id$: Observable<number>) => {
+    return id$.pipe(
+      concatMap(id => {
+        this.setLoading();
+        return this.parkingLotService.getById(id).pipe(
+          tapResponse(
+            car => {
+              this.setLoaded();
+              this.updateCars(car); // TODO: ? rever
+            },
+            error => this.updateError(String(error))
+          )
+        );
+      })
+    );
+  });
+
+  readonly updateCar = this.effect(({ id, car }: { id: number; car: Car }) => {
+    return of({ id, car }).pipe(
+      concatMap(({ id, car }) => {
+        this.setLoading();
+        return this.parkingLotService.update(id, car).pipe(
+          tapResponse(
+            updatedCar => {
+              this.setLoaded();
+              this.replaceCar(updatedCar);
+            },
+            error => this.updateError(String(error))
+          )
+        );
+      })
+    );
+  });
+
+  readonly deleteCar = this.effect((id$: Observable<number>) => {
+    return id$.pipe(
+      concatMap(id => {
+        this.setLoading();
+        return this.parkingLotService.delete(id).pipe(
+          tapResponse(
+            () => {
+              this.setLoaded();
+              this.removeCar(id);
+            },
+            error => this.updateError(String(error))
+          )
         );
       })
     );
