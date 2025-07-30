@@ -164,7 +164,7 @@ export class StoreService extends ComponentStore<ParkingState> {
     );
   });
 
-  readonly loadCarById = this.effect((id$: Observable<number>) => {
+  readonly loadCarById = this.effect((id$: Observable<string>) => {
     return id$.pipe(
       concatMap(id => {
         this.setLoading();
@@ -181,7 +181,7 @@ export class StoreService extends ComponentStore<ParkingState> {
     );
   });
 
-  readonly updateCar = this.effect(({ id, car }: { id: number; car: Car }) => {
+  readonly updateCar = this.effect(({ id, car }: { id: string; car: Car }) => {
     return of({ id, car }).pipe(
       concatMap(({ id, car }) => {
         this.setLoading();
@@ -198,7 +198,7 @@ export class StoreService extends ComponentStore<ParkingState> {
     );
   });
 
-  readonly deleteCar = this.effect((id$: Observable<number>) => {
+  readonly deleteCar = this.effect((id$: Observable<string>) => {
     return id$.pipe(
       concatMap(id => {
         this.setLoading();

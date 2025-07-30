@@ -49,7 +49,7 @@ export class ParkingLotService {
     return this.http.get<Car[]>(this.baseUrl);
   }
 
-  getById(id: number): Observable<Car> {
+  getById(id: string): Observable<Car> {
     return this.http.get<Car>(`${this.baseUrl}/${id}`);
   }
 
@@ -57,11 +57,11 @@ export class ParkingLotService {
     return this.http.get<Car>(`${this.baseUrl}/plate/${plate}`);
   }
 
-  update(id: number, car: Car): Observable<Car> {
+  update(id: string, car: Car): Observable<Car> {
     return this.http.put<Car>(`${this.baseUrl}/${id}`, car);
   }
 
-  delete(id: number): Observable<void> {
+  delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }
