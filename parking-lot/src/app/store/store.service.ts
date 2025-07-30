@@ -100,7 +100,7 @@ export class StoreService extends ComponentStore<ParkingState> {
     return plate$.pipe(
       concatMap((plate: string) => {
         this.setLoading();
-        return this.parkingLotService.add(plate).pipe(
+        return this.parkingLotService.addToParkingLot(plate).pipe(
           tapResponse(
             car => {
               this.setLoaded();
