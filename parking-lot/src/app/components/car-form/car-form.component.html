@@ -1,0 +1,23 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <label>
+    Plate:
+    <input formControlName="plate" />
+  </label>
+
+  <label>
+    Model:
+    <input formControlName="model" />
+  </label>
+
+  <label>
+    Color:
+    <input formControlName="color" />
+  </label>
+
+  <label>
+    Brand:
+    <input formControlName="brand" />
+  </label>
+
+  <button type="submit">{{ form.value.id ? 'Update' : 'Create' }}</button>
+</form>

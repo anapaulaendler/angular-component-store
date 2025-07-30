@@ -7,11 +7,13 @@ import { CarListComponent } from './components/car-list/car-list.component';
 import { FormsModule } from '@angular/forms'
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CarFormComponent } from './components/car-form/car-form.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    CarListComponent
+    CarListComponent,
+    CarFormComponent
   ],
   imports: [
     BrowserModule,
