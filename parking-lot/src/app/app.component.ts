@@ -23,11 +23,7 @@ export class AppComponent {
     this.plate = "";
   }
 
-  addPlate($event: Event) {
-    const target = $event.target;
-
-    if (target instanceof HTMLButtonElement) {
-      this.plate = target.innerHTML;
-    }
+  addPlate(plate: string): void {
+    this.plate = plate;
   }
 }

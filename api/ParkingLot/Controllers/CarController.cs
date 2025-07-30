@@ -47,13 +47,13 @@ public class CarsController : ControllerBase
     }
         
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateCar(Guid id, Car car)
+    public async Task<ActionResult<Car>> UpdateCar(Guid id, Car car)
     {
         if (id != car.Id) return BadRequest();
 
         _context.Entry(car).State = EntityState.Modified;
         await _context.SaveChangesAsync();
-        return NoContent();
+        return car;
     }
 
     [HttpDelete("{id}")]
