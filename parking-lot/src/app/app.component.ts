@@ -1,29 +1,34 @@
 import { Component } from '@angular/core';
 import { StoreService } from './store/store.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  /** 
-   * You inject the service at the component level so that this instance only has 
-   * this component and its children.
-   */
   providers: [StoreService],
 })
 export class AppComponent {
-  plate = ''
-  vm$ = this.store.vm$
+  vm$ = this.store.vm$;
+  form: FormGroup;
 
-  constructor(private store: StoreService) {}
+  constructor(private store: StoreService, private fb: FormBuilder) {
+    this.form = this.fb.group({
+      plate: ['', [Validators.required, Validators.minLength(5)]],
+    });
+  }
 
-  onSubmit($event: Event) {
-    $event.preventDefault()
-    this.store.addCarToParkingLot(this.plate)
-    this.plate = "";
+  onSubmit(): void {
+    if (this.form.valid) {
+      const plate = this.form.get('plate')?.value;
+      this.store.addCarToParkingLot(plate);
+      this.form.reset();
+    } else {
+      this.form.markAllAsTouched();
+    }
   }
 
   addPlate(plate: string): void {
-    this.plate = plate;
+    this.form.get('plate')?.setValue(plate);
   }
 }

@@ -8,39 +8,27 @@
     <p class="error" *ngIf="asyncData.vm.error">{{ asyncData.vm.error }}</p>
   </div>
 
-  <div class="box">
-    <form (submit)="onSubmit($event)">
-      <input 
-        type="text"
-        [(ngModel)]="plate"
-        [ngModelOptions]="{ standalone: true }"
-        placeholder="Ex: 2FMDK3, 1GYS4C, 1GKS1E, 1G6AS5"
-        [disabled]="asyncData.vm.loading"
-      />
-
-      <button 
-        type="submit"
-        [disabled]="asyncData.vm.loading || !plate.length"
-      >
-        <ng-container *ngIf="asyncData.vm.loading; else notLoading">
-          Loading...
-        </ng-container>
-        <ng-template #notLoading>
-          Add Car
-        </ng-template>
-      </button>
-    </form>
-
-    <div class="shortcuts">
-      <h5>Shortcuts</h5>
-      <div class="examples">
-        <button type="button" (click)="addPlate('2FMDK3')">2FMDK3</button>
-        <button type="button" (click)="addPlate('1GYS4C')">1GYS4C</button>
-        <button type="button" (click)="addPlate('1GKS1E')">1GKS1E</button>
-        <button type="button" (click)="addPlate('1G6AS5')">1G6AS5</button>
-      </div>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <input
+      type="text"
+      formControlName="plate"
+      placeholder="Ex: 2FMDK3, 1GYS4C, 1GKS1E, 1G6AS5"
+    />
+    <div *ngIf="form.get('plate')?.invalid && form.get('plate')?.touched" class="error">
+      <small *ngIf="form.get('plate')?.hasError('required')">Campo obrigatório.</small>
+      <small *ngIf="form.get('plate')?.hasError('minlength')">Mínimo 5 caracteres.</small>
     </div>
+
+    <button type="submit" [disabled]="form.invalid || (vm$ | async)?.loading">Adicionar Carro</button>
+  </form>
+
+  <div class="shortcuts">
+    <h5>Shortcuts</h5>
+    <button type="button" (click)="addPlate('2FMDK3')">2FMDK3</button>
+    <button type="button" (click)="addPlate('1GYS4C')">1GYS4C</button>
+    <button type="button" (click)="addPlate('1GKS1E')">1GKS1E</button>
+    <button type="button" (click)="addPlate('1G6AS5')">1G6AS5</button>
   </div>
 
-  <app-car-list [cars]="asyncData.vm.cars"></app-car-list>
+  <app-car-list [cars]="(vm$ | async)?.cars || []"></app-car-list>
 </ng-container>
