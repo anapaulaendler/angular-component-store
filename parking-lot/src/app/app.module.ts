@@ -8,12 +8,14 @@ import { FormsModule } from '@angular/forms'
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CarFormComponent } from './components/car-form/car-form.component';
+import { CarDetailComponent } from './components/car-detail/car-detail.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CarListComponent,
-    CarFormComponent
+    CarFormComponent,
+    CarDetailComponent,
   ],
   imports: [
     BrowserModule,
