@@ -24,10 +24,10 @@ export class AppComponent {
   }
 
   addPlate($event: Event) {
-    const target = $event.target as HTMLButtonElement // TODO: rever aqui tambem a tipagem nativa do ts
+    const target = $event.target;
 
-    if (target.nodeName === 'BUTTON') {
-      this.plate = target.innerHTML
+    if (target instanceof HTMLButtonElement) {
+      this.plate = target.innerHTML;
     }
   }
 }

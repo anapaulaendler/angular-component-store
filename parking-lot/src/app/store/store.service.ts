@@ -76,7 +76,6 @@ export class StoreService extends ComponentStore<ParkingState> {
 
   readonly updateCars = this.updater((state: ParkingState, car: Car) => ({
     ...state,
-    error: "",
     cars: [...state.cars, car]
   }));
 
